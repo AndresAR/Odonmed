@@ -1,0 +1,75 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+<head lang="es">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>{% block title %} {% endblock %}</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/sticky-footer.css' %}" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css">
+
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+
+</head>
+<body>
+  <!-- Wrap all page content here -->
+    <div id="wrap">
+      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-static-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">OdonMed</a>
+              </div>
+              <div class="navbar-collapse collapse">
+                {% if user.is_authenticated %}
+                    <p class="navbar-text navbar-right">Bienvenido, <b>{{ user.first_name }}</b> <a href="{% url 'url_logout' %}">(Salir)</a> </p>
+                {% else %}
+                    <p class="navbar-text navbar-right">Bienvenido, por favor inicia sesión</p>
+                {% endif %}
+              </div>
+
+        </div>
+
+      </div>
+
+      <!-- Wrap all page content here -->
+      <div class="container">
+
+                {% block body %}
+                {% endblock %}
+
+      </div>
+    </div>
+    <div class="footer">
+       <div class="container">
+           <p class="text-muted credit">OdonMed 2014</p>
+      </div>
+    </div>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+</body>
+</html>

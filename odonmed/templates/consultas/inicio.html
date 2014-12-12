@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+
+{% block title %}OdonMed{% endblock %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+
+        <div class="page-header">
+            <h3>Dr.{{ user.first_name }} {{ user.last_name }}</h3>
+        </div>
+        {% if paciente %}
+            {% if anamnesis %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3>Anamnesis <small>{{paciente}}</small></h3></div>
+                    <div class="panel-body">
+                        {% for anamnesis in anamnesis %}
+                            {% if anamnesis.diabetes %}
+                                <strong>Diabetes</strong> = Si<br />
+                            {% else %}
+                                <strong>Diabetes</strong> = No<br />
+                            {% endif %}
+                            {% if anamnesis.hipertension %}
+                                <strong>Hipertensión</strong> = Si<br />
+                            {% else %}
+                                <strong>Hipertensión</strong> = No<br />
+                            {% endif %}
+                            {% if anamnesis.cancer %}
+                                <strong>Cancer</strong> = Si<br />
+                            {% else %}
+                                <strong>Cancer</strong> = No<br />
+                            {% endif %}
+                            <strong>Alergias</strong> = {{anamnesis.alergias}}<br />
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <form action="" method="post" class="form-group" enctype="multipart/form-data">{% csrf_token %}
+                    <h2 class="form-signin-heading">Registro de Anamnesis</h2>
+                        {{anamnesisForm.as_p}}
+                    <input type="submit" value="Registrar" class="btn btn-primary btn-lg btn-block" />
+                </form>
+            {% endif %}
+        {% else %}
+
+        {% endif %}
+    {% else %}
+
+    {% endif %}
+
+
+{% endblock %}
+

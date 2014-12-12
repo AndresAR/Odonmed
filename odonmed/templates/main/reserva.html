@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+
+{% block title %}OdonMed{% endblock %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+
+        <ul class="breadcrumb navbar-right">
+            <li class="active"><a href="/perfil/{{ user.username }}">Perfil</a></li>
+            <li><a href="reserva">Toma de Hora</a></li>
+        </ul>
+        <div class="page-header">
+            <h3>Reserva de Hora</h3>
+        </div>
+        <script>
+            $.datepicker.regional['es'] = {
+                closeText: 'Cerrar',
+                prevText: '<Ant',
+                nextText: 'Sig>',
+                currentText: 'Hoy',
+                minDate: 0,
+                monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+                dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+                dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+                weekHeader: 'Sm',
+                dateFormat: 'dd/mm/yy',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: ''
+
+            };
+            $.datepicker.setDefaults($.datepicker.regional['es']);
+
+        </script>
+        <div class="row">
+            <div class="col-md-4">
+                <div id="datepicker"></div>
+            </div>
+            <div class="col-md-4" id="doctor" hidden="true">
+             <h2>Seleccione un Médico</h2>
+            {% if medicos %}
+                <select id="doctores" onchange="getval(this);">
+                    <option>Seleccione un Doctor</option>
+                    {% for medicos in medicos %}
+                        <option value="{{ medicos.id }}">{{ medicos.user.first_name}} {{ medicos.user.last_name}}</option>
+                    {% empty %}
+                        <option>No hay Doctor</option>
+                    {% endfor %}
+                </select>
+
+            {% endif %}
+            </div>
+            <div class="col-md-4">
+                <ul class="list-unstyled">
+                    <div id="horas" hidden="true">
+                    <h4>Horas Disponibles <small id="doc"></small></h4>
+                        <div id="ho" class="radio">
+
+                        </div>
+                    </div>
+                </ul>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Confirmar la Hora</h4>
+                        </div>
+                    <div class="modal-body">
+                        <strong>Doctor </strong> <span id="doc1"></span><br/>
+                        <strong>Paciente</strong> <span>{{ user.first_name }}</span><br/>
+                        <strong>Día</strong> <span id="dia1"></span><br/>
+                        <strong>Hora</strong> <span id="hora1"></span>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" onclick="reservar(this);">Reservar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    {% else %}
+        <form action="" method="post" class="form-signin">{% csrf_token %}
+            <h2 class="form-signin-heading">Inicio de Sesión</h2>
+                {{form.as_p}}
+            <label>
+            <a href="{% url 'url_registrar' %}">Crea tu cuenta</a>
+            </label>
+            <input type="submit" value="Iniciar Sesión" class="btn btn-primary btn-lg btn-block" />
+        </form>
+    {% endif %}
+
+
+
+
+<script>
+            var med = ""
+            var idFecha = ""
+            var idPaciente = {{ user.id }}
+            function reservar(){
+                $.ajax({
+                    data: {'medico':med, 'fecha':idFecha, 'paciente':idPaciente},
+                    url: '/guardareserva',
+                    type: 'get',
+                })
+                .done(function(){
+                    $("#myModal").modal('hide')
+                    window.location.href("/perfil/{{ user.username }}");
+                })
+            }
+
+            function isEmpty(obj) {
+                return !Object.keys(obj).length > 0;
+            }
+
+            function getval(sel) {
+              var fecha = $("#datepicker").datepicker().val()
+              med = sel.value
+              $("#dia1").html(fecha)
+              var vSkill = document.getElementById('doctores')
+              var vSkillText = vSkill.options[vSkill.selectedIndex].innerHTML
+              $("#doc").html(vSkillText)
+              $("#doc1").html(vSkillText)
+              var html = ""
+              $.ajax({
+                data: {'medico':med, 'fecha':fecha},
+                url: '/listado',
+                type: 'get',
+                success: function(data){
+                    $("#horas").show()
+
+                    if(isEmpty(data)){
+                        html += "<li>No hay horas disponibles!</li>"
+                    }else{
+                        for(var i = 0; i<data.length; i++){
+                            html += '<input type="radio"  onclick="handleClick(this);" data-toggle="modal" data-target="#myModal" name="'+ data[i].pk +'" id="optionsRadios1" value="'+ data[i].fields.horas +'">'+ data[i].fields.horas +'</label><br/>'
+                        }
+
+                    }
+                    $("#ho").html(html);
+                },
+              });
+
+            }
+
+
+
+            $( "#datepicker" ).datepicker({
+                onSelect: function(date){
+                    $.ajax({
+                        data: {'hora':date},
+                        url: '/buscar/',
+                        type: 'get',
+                        success: function(data){
+                             $("#doctor").show();
+                        },
+                    });
+                },dateFormat: "yy-mm-dd"
+            });
+
+            function handleClick(hora) {
+                $("#hora1").html(hora.value)
+                idFecha = hora.name
+            }
+        </script>
+{% endblock %}
+

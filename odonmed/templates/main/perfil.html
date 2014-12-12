@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+
+{% block title %}OdonMed{% endblock %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+
+        <ul class="breadcrumb navbar-right">
+            <li class="active"><a href="/perfil/{{ user.username }}">Perfil</a></li>
+            <li><a href="/perfil/{{ user.username }}/reserva/">Toma de Hora</a></li>
+        </ul>
+        <div class="page-header">
+            <h3>{{ user.first_name }} {{ user.last_name }} <a href="#" class="glyphicon glyphicon-pencil"></a></h3>
+        </div>
+        {% if pacientes %}
+            <dl class="dl-horizontal">
+                <dt>Dirección</dt>
+                <dd>{{ pacientes.direccion }}</dd>
+                <dt>Telefono</dt>
+                <dd>{{ pacientes.telefono }}</dd>
+                <dt>Sexo</dt>
+                {% if pacientes.sexo == 'M' %}
+                    <dd>Masculino</dd>
+                {% else %}
+                    <dd>Femenino</dd>
+                {% endif %}
+                <dt>Fecha de Nacimiento</dt>
+                <dd>{{ pacientes.fecha_de_nacimiento }}</dd>
+            </dl>
+            <hr>
+            {% if reserva %}
+                Tienes <b>{{ reserva.count }}</b> horas reservadas
+            {% endif %}
+
+
+        {% else %}
+            No hay información
+        {% endif %}
+    {% else %}
+        <form action="" method="post" class="form-signin">{% csrf_token %}
+            <h2 class="form-signin-heading">Inicio de Sesión</h2>
+                {{form.as_p}}
+            <label>
+            <a href="{% url 'url_registrar' %}">Crea tu cuenta</a>
+            </label>
+            <input type="submit" value="Iniciar Sesión" class="btn btn-primary btn-lg btn-block" />
+        </form>
+    {% endif %}
+
+
+{% endblock %}
+

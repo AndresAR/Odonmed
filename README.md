@@ -27,5 +27,4 @@ Aplicación de Sistema y Gestión Ontológica, con el fin de facilitar al profes
 
 ###** IDE de Desarrollo **###
 
-* PyCharm 3.4 (*Free Community Edition*) - [Descargar Aquí](http://www.jetbrains.com/pycharm/)Odonmed
-=======
+* PyCharm 3.4 (*Free Community Edition*) - [Descargar Aquí](http://www.jetbrains.com/pycharm/)

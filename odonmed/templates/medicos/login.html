@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+
+{% block title %}OdonMed{% endblock %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+
+        <ul class="breadcrumb navbar-right">
+            <li class="active"><a href="/perfil/{{ user.username }}">Pacientes</a></li>
+            <li><a href="/perfil/{{ user.username }}/reserva">Horas Disponibles</a></li>
+        </ul>
+        <div class="page-header">
+            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+        </div>
+
+
+
+
+    {% else %}
+        <form action="" method="post" class="form-signin">{% csrf_token %}
+            <h2 class="form-signin-heading">Inicio de Sesión Doctores</h2>
+                {{form.as_p}}
+            <input type="submit" value="Iniciar Sesión" class="btn btn-primary btn-lg btn-block" />
+        </form>
+    {% endif %}
+
+
+{% endblock %}
+

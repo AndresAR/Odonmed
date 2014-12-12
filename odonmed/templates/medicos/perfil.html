@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+<!-- Custom styles for this template -->
+
+{% block title %}OdonMed{% endblock %}
+{% block body %}
+
+    {% if user.is_authenticated %}
+
+        <ul class="breadcrumb navbar-right">
+            <li class="active"><a class="paciente" href="{{user.id}}">Pacientes</a></li>
+            <li><a href="reserva">Horas Disponibles</a></li>
+        </ul>
+        <div class="page-header">
+            <h3>Dr. {{ user.first_name }} {{ user.last_name }}</h3>
+        </div>
+        {% if reserva %}
+            <h3>Pacientes</h3>
+            <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Hora</th>
+                <th>Día</th>
+                <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for reserva in reserva %}
+            <tr>
+                {% for paciente in paciente %}
+                    {% if paciente.usuario.id == reserva.idPaciente %}
+                        {% if reserva.atendido %}
+                        {% else %}
+                            <td>{{ paciente }}</td>
+                                {% for hora in hora %}
+                                    {% if reserva.idFecha == hora.id %}
+                                        <td>{{ hora.horas }}</td><td>{{ hora.dias }}</td><td><a type="button" class="btn btn-primary" href="/consultas/{{paciente.usuario.id}}/{{user.id}}">Atender</a> <a type="button" class="btn btn-danger" href="/medicos/eliminar/{{reserva.id}}">Eliminar</a></td>
+                                    {% endif %}
+                                {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+             </tr>
+            {% endfor %}
+            </tbody>
+            </table>
+        {% else %}
+            Recuerde revisar sus <a href="{{user.id}}">Pacientes</a> haciendo click en el link
+        {% endif %}
+    {% else %}
+        <form action="" method="post" class="form-signin">{% csrf_token %}
+            <h2 class="form-signin-heading">Bienvenidos Doctores</h2>
+                {{form.as_p}}
+            <input type="submit" value="Iniciar Sesión" class="btn btn-primary btn-lg btn-block" />
+        </form>
+    {% endif %}
+{% endblock %}
+
