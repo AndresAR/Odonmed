@@ -1,6 +1,6 @@
 # **OdonMed** #
 
-Aplicación de Sistema y Gestión Ontológica, con el fin de facilitar al profesional del area médica la atención de pacientes y llevar de mejor forma el historial de los pacientes. 
+Aplicación de Sistema y Gestión Odontológica, con el fin de facilitar al profesional del area médica la atención de pacientes y llevar de mejor forma el historial de los pacientes. 
 
 ## **Módulos Presentados** ##
 
